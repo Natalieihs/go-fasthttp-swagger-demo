@@ -18,14 +18,26 @@ type User struct {
 // @Accept json
 // @Produce json
 // @Param id query int true "User ID"
+// @Param name query string false "User Name"
+// @Security ApiKeyAuth
 // @Success 200 {object} User
+// @Failure 401 {object} string "Unauthorized"
 // @Router /user [get]
 func GetUser(ctx *fasthttp.RequestCtx) {
+	// 检查认证
+	token := string(ctx.Request.Header.Peek("T"))
+	if token == "" {
+		ctx.SetStatusCode(fasthttp.StatusUnauthorized)
+		ctx.SetBodyString("Unauthorized: Missing token")
+		return
+	}
+	// 这里可以添加更多的token验证逻辑
+
 	id := ctx.QueryArgs().GetUintOrZero("id")
-	name := ctx.QueryArgs().Peek("name")
+	name := string(ctx.QueryArgs().Peek("name"))
 	user := User{
 		ID:   id,
-		Name: string(name),
+		Name: name,
 	}
 
 	jsonUser, err := json.Marshal(user)

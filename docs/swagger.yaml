@@ -49,6 +49,10 @@ paths:
         name: id
         required: true
         type: integer
+      - description: User Name
+        in: query
+        name: name
+        type: string
       produces:
       - application/json
       responses:
@@ -56,6 +60,12 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/handlers.User'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+      security:
+      - ApiKeyAuth: []
       summary: Get a user
       tags:
       - users
